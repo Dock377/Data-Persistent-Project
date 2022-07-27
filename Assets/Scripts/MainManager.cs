@@ -18,6 +18,7 @@ public class MainManager : MonoBehaviour
     private int m_Points;
     
     private bool m_GameOver = false;
+    public string m_Nome;
 
     
     // Start is called before the first frame update
@@ -73,6 +74,8 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-        MigliorPunteggio.text = $"Best Score : Ciao : {m_Points}";
+        //Scrivere il punteggio migliore
+        m_Nome = GestioneMenu.Richiesta.NomeGiocatore;
+        MigliorPunteggio.text = $"Best Score : {m_Nome} : {m_Points}";
     }
 }
