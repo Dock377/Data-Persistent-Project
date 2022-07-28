@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -16,11 +17,17 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
+    public int m_BestPoints = 0;
+    
     
     private bool m_GameOver = false;
     public string m_Nome;
+    public string m_NomeMigliore;
 
-    
+    private void Awake()
+    {
+        CaricaMigliore();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +45,7 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        MigliorPunteggio.text = $"Best Score : {m_NomeMigliore} : {m_BestPoints}";
     }
 
     private void Update()
@@ -62,6 +70,7 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+        //MigliorPunteggio.text = $"Best Score : {m_NomeMigliore} : {m_BestPoints}";
     }
 
     void AddPoint(int point)
@@ -76,6 +85,43 @@ public class MainManager : MonoBehaviour
         GameOverText.SetActive(true);
         //Scrivere il punteggio migliore
         m_Nome = GestioneMenu.Richiesta.NomeGiocatore;
-        MigliorPunteggio.text = $"Best Score : {m_Nome} : {m_Points}";
+        if (m_Points > m_BestPoints)
+        {
+            m_BestPoints = m_Points;
+            m_NomeMigliore = m_Nome;
+            MigliorPunteggio.text = $"Best Score : {m_NomeMigliore} : {m_BestPoints}";
+            SalvaGiocatore();
+        }
+    }
+
+    [System.Serializable]
+    class SalvaDati
+    {
+        public string NomeMigliore;
+        public int PunteggioMigliore;
+    }
+
+    public void SalvaGiocatore()
+    {
+        SalvaDati dati = new SalvaDati();
+        dati.NomeMigliore = m_NomeMigliore;
+        dati.PunteggioMigliore = m_BestPoints;
+
+        string json = JsonUtility.ToJson(dati);
+
+        File.WriteAllText(Application.persistentDataPath + "/migliorepunteggio.json", json);
+    }
+
+    public void CaricaMigliore()
+    {
+        string percorso = Application.persistentDataPath + "/migliorepunteggio.json";
+        if (File.Exists(percorso))
+        {
+            string json = File.ReadAllText(percorso);
+            SalvaDati dati = JsonUtility.FromJson<SalvaDati>(json);
+
+            m_NomeMigliore = dati.NomeMigliore;
+            m_BestPoints = dati.PunteggioMigliore;
+        }
     }
 }

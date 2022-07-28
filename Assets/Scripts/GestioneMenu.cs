@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -11,12 +12,16 @@ public class GestioneMenu : MonoBehaviour
 {
     public static GestioneMenu Richiesta;
 
-    public Text MigliorePunteggio;
+    public Text ScrittaMiglioreGiocatore;
     public InputField ScriviNome;
     public string NomeGiocatore;
 
     public Button Inizio;
     public Button Esci;
+
+    //dati migliori
+    public string nomeMigliore;
+    public int punteggioMigliore;
 
     private void Awake()
     {
@@ -30,6 +35,16 @@ public class GestioneMenu : MonoBehaviour
         //una sola copia
         Richiesta = this;
         DontDestroyOnLoad(gameObject);
+
+        CaricaMigliore();
+    }
+
+    private void Start()
+    {
+        if(nomeMigliore != null && punteggioMigliore != 0)
+        {
+            ScrittaMiglioreGiocatore.text = $"Best Score : {nomeMigliore} : {punteggioMigliore}";
+        }        
     }
 
     public void SceltaNome()
@@ -48,6 +63,26 @@ public class GestioneMenu : MonoBehaviour
         EditorApplication.ExitPlaymode();
 #else
         Application.Quit(); // original code to quit Unity player
-#endif
+#endif  
+    }
+
+    [System.Serializable]
+    class SalvaDati
+    {
+        public string NomeMigliore;
+        public int PunteggioMigliore;
+    }
+
+    public void CaricaMigliore()
+    {
+        string percorso = Application.persistentDataPath + "/migliorepunteggio.json";
+        if (File.Exists(percorso))
+        {
+            string json = File.ReadAllText(percorso);
+            SalvaDati dati = JsonUtility.FromJson<SalvaDati>(json);
+
+            nomeMigliore = dati.NomeMigliore;
+            punteggioMigliore = dati.PunteggioMigliore;
+        }
     }
 }

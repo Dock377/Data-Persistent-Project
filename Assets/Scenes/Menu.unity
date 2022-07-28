@@ -692,11 +692,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0960c14dcaa3bf846b9325e6e380f426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MigliorePunteggio: {fileID: 1560386020}
+  ScrittaMiglioreGiocatore: {fileID: 1560386020}
   ScriviNome: {fileID: 1232603915}
   NomeGiocatore: 
   Inizio: {fileID: 983603515}
   Esci: {fileID: 1651779978}
+  nomeMigliore: 
+  punteggioMigliore: 0
 --- !u!1 &983603513
 GameObject:
   m_ObjectHideFlags: 0
